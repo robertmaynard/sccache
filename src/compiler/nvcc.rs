@@ -160,6 +160,7 @@ counted_array!(pub static ARGS: [ArgInfo<gcc::ArgData>; _] = [
     flag!("-dc", DoCompilation),
     take_arg!("-gencode", OsString, CanBeSeparated('='), PassThrough),
     take_arg!("-maxrregcount", OsString, CanBeSeparated('='), PassThrough),
+    flag!("-ptx", DoCompilation),
     take_arg!("-rdc", OsString, CanBeSeparated('='), PreprocessorArgument),
     take_arg!("-x", OsString, CanBeSeparated('='), Language),
 
