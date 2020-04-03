@@ -276,6 +276,7 @@ pub fn parse_arguments(
     let mut input_arg = None;
     let mut common_args = vec![];
     let mut preprocessor_args = vec![];
+    let mut dependency_args = vec![];
     let mut extra_hash_files = vec![];
     let mut compilation = false;
     let mut compilation_flag = OsString::new();
@@ -371,9 +372,10 @@ pub fn parse_arguments(
             }
             Some(PreprocessorArgumentFlag)
             | Some(PreprocessorArgument(_))
-            | Some(PreprocessorArgumentPath(_))
+            | Some(PreprocessorArgumentPath(_)) => &mut preprocessor_args,
+            Some(DepArgumentPath(_))
             | Some(DepTarget(_))
-            | Some(NeedDepTarget) => &mut preprocessor_args,
+            | Some(NeedDepTarget) => &mut dependency_args,
         };
         // Normalize attributes such as "-I foo", "-D FOO=bar", as
         // "-Ifoo", "-DFOO=bar", etc. and "-includefoo", "idirafterbar" as
@@ -430,6 +432,7 @@ pub fn parse_arguments(
         compilation_flag,
         depfile,
         outputs,
+        dependency_args,
         preprocessor_args,
         common_args,
         extra_hash_files,
@@ -937,6 +940,7 @@ mod test {
             compilation_flag: "-c".into(),
             depfile: None,
             outputs: vec![("obj", "foo.obj".into())].into_iter().collect(),
+            dependency_args: vec![],
             preprocessor_args: vec![],
             common_args: vec![],
             extra_hash_files: vec![],
@@ -979,6 +983,7 @@ mod test {
             outputs: vec![("obj", "foo.obj".into()), ("pdb", pdb)]
                 .into_iter()
                 .collect(),
+            dependency_args: vec![],
             preprocessor_args: vec![],
             common_args: vec![],
             extra_hash_files: vec![],
