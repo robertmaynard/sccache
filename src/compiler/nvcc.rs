@@ -104,10 +104,29 @@ impl CCompilerImpl for NVCC {
         env_vars: &[(OsString, OsString)],
         rewrite_includes_only: bool,
     ) -> Result<(CompileCommand, Option<dist::CompileCommand>, Cacheable)> {
+
+        //todo: refactor show_includes into dependency_args
+
+        let mut fused_args = ParsedArguments {
+            input: parsed_args.input.clone(),
+            language: parsed_args.language,
+            compilation_flag: parsed_args.compilation_flag.clone(),
+            depfile: parsed_args.depfile.clone(),
+            outputs: parsed_args.outputs.clone(),
+            dependency_args: vec![],
+            preprocessor_args: parsed_args.preprocessor_args.clone(),
+            common_args: parsed_args.common_args.clone(),
+            extra_hash_files: parsed_args.extra_hash_files.clone(),
+            msvc_show_includes: parsed_args.msvc_show_includes,
+            profile_generate: parsed_args.profile_generate,
+            color_mode: parsed_args.color_mode,
+        };
+        fused_args.common_args.extend(parsed_args.dependency_args.clone());
+
         gcc::generate_compile_commands(
             path_transformer,
             executable,
-            parsed_args,
+            &fused_args,
             cwd,
             env_vars,
             self.kind(),
@@ -233,7 +252,7 @@ mod test {
         assert_eq!(1, a.outputs.len());
         assert_eq!(
             ovec!["-MD", "-MF", "foo.o.d", "-MT", "foo.o"],
-            a.preprocessor_args
+            a.dependency_args
         );
         assert_eq!(ovec!["-fabc"], a.common_args);
     }
