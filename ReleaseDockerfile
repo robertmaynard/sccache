@@ -1,0 +1,11 @@
+FROM ekidd/rust-musl-builder
+COPY . /home/rust/src
+RUN cargo build --release --target x86_64-unknown-linux-musl --features=kitware
+
+#docker cp :/home/rust/src/target/x86_64-unknown-linux-musl/release/sccache sccache
+#construct tarball name is sccache-0.2.14-nvcc_v1-x86_64-unknown-linux-musl.tar.gz
+#construct sha256 for tarball
+#make a tag
+
+
+
